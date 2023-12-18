@@ -76,6 +76,10 @@ if (!_userService.IsAdmin() && _userService.GetUserId() != news.AuthorId)
 
 ```
 
+Vor Änderung: (Screenshot zeigen): 
+User konnte mit Adminrechte einen 'AdminNews' erstellen (und kann diese immer noch bearbeiten.)
+jetzt kommt der Error 401 --> Screenshot zeigen vom Error und versuchen des erstellen des newbeitrags als 'admin'. 
+
 
 ## **_Handlungsziel 2_**
 
