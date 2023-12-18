@@ -83,6 +83,75 @@ jetzt kommt der Error 401 --> Screenshot zeigen vom Error und versuchen des erst
 
 ## **_Handlungsziel 2_**
 
+Aufträge bearbeitet: 
+SQL_INjection
+XSS
+Unsaubere API
+Review 
+Pentests
+
+code sql injection:
+```csharp
+public ActionResult<User> Login(LoginDto request)
+{
+    if (request == null || request.Username.IsNullOrEmpty() || request.Password.IsNullOrEmpty())
+    {
+        return BadRequest();
+    }
+    string username = request.Username;
+    string passwordHash = MD5Helper.ComputeMD5Hash(request.Password);
+
+    User? user = _context.Users
+        .Where(u => u.Username == username)
+        .Where(u => u.Password == passwordHash)
+        .FirstOrDefault();
+
+    if (user == null)
+    {
+        return Unauthorized("login failed");
+    }
+
+    return Ok(CreateToken(user));
+}
+```
+broken access controll:
+
+```csharp
+private string CreateToken(User user)
+{
+    string issuer = _configuration.GetSection("Jwt:Issuer").Value!;
+    string audience = _configuration.GetSection("Jwt:Audience").Value!;
+
+    List<Claim> claims = new List<Claim> {
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new Claim(ClaimTypes.Role,  (user.IsAdmin ? "admin" : "user"))
+    };
+
+    string base64Key = _configuration.GetSection("Jwt:Key").Value!;
+    SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Convert.FromBase64String(base64Key));
+
+    SigningCredentials credentials = new SigningCredentials(
+            securityKey,
+            SecurityAlgorithms.HmacSha512Signature);
+
+    JwtSecurityToken token = new JwtSecurityToken(
+        issuer: issuer,
+        audience: audience,
+        claims: claims,
+        notBefore: DateTime.Now,
+        expires: DateTime.Now.AddDays(1),
+        signingCredentials: credentials
+     );
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
+```
+
+unsaubere API:
+
+Hier mussten wir die Website an sich ändern. 
 
 ## **_Handlungsziel 3_**
 
