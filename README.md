@@ -1,6 +1,13 @@
 # NiklausAndrea_LB183
 Dies ist eine sehr coole LB o.o
 
+Sie arbeiten das Modul durch und weisen mit einem ePortfolio die erreichten Handlungsziele mit eigenen Beispielen von Artefakten (hergestellte Objekte / Produkte) nach. Sie weisen somit in dieser Leistungsbeurteilung nach, welche Handlungsziele Sie in welchem Masse erreicht haben. 
+
+Sie erstellen zu den einzelnen Handlungszielen Artefakte (hergestellte Objekte / Produkte), anhand denen Sie beweisen können, dass Sie das Handlungsziel erreicht haben. Sie können dazu die abgegebene Applikation verwenden oder ‒ in Absprache mit der Lehrperson ‒ ein Beispiel aus Ihrer Firma oder aus dem Lernatelier. Anhand dieser Applikation weisen Sie mehrere oder sogar alle Handlungsziele nach.
+
+Sie dürfen die selbst erarbeiteten Resultate der Aufträge im Modul als Artefakte übernehmen.
+
+
 ## Einleitung
 In der Einleitung beschreiben Sie kurz den Inhalt des ePortfolios, damit die Lesenden einen Überblick haben, was sie erwartet.
 
@@ -17,19 +24,19 @@ Pro Handlungsziel ist ein Abschnitt mit folgendem Inhalt zu erstellen:
 
 4. Beurteilen Sie die Umsetzung Ihres Artefakts im Hinblick auf das Handlungsziel kritisch. Sollten gewisse Aspekte des Handlungsziels fehlen, haben Sie die Möglichkeit, in diesem Teil darauf einzugehen.
 
-**_## Handlungsziel 1_**
+## _Handlungsziel 1_
 
 
-**_## Handlungsziel 2_**
+## **_Handlungsziel 2_**
 
 
-**_## Handlungsziel 3_**
+## **_Handlungsziel 3_**
 
 
-**_## Handlungsziel 4_**
+## **_Handlungsziel 4_**
 
 
-**_## Handlungsziel 5_**
+## **_Handlungsziel 5_**
 
 
 ## Selbsteinschätzung des Erreichungsgrades der Kompetenz des Moduls
