@@ -26,6 +26,56 @@ Pro Handlungsziel ist ein Abschnitt mit folgendem Inhalt zu erstellen:
 
 ## _Handlungsziel 1_
 
+Im Ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie Zum Beispiel ```vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```. Wir haben einige Szenarien bekommen und mussten anordnen, wie hoch diese Schutzziele betroffen waren. Danach haben wir ```Open Web Application Security Project```, kurz ```OWASP``` angeschaut, eine Security Website. 
+
+Beim Praktischen Teil, Auftrag ```LA_183_10_Business_Logic```, mussten wir bei der App den Newseintrag Security verändern. Der Fehler war derjenige, dass jeder, wer die ID des News Eintrags kennt, dieser bearbeiten oder löschen kann. Der Benutzer / die Zugriffsrechte werden im Backend nicht geprüft. Dies mussten wir so umprogrammieren, dass der normale Benutzer nur noch ihre eigenen News bearbeiten und löschen kann.
+
+Artefakt: Codeabschnitt?
+Folgende Änderungen wurden im Code gemacht:
+
+```csharp
+//In NewsController.cs
+public class NewsController : ControllerBase
+
+//mehr Code...
+
+[HttpPatch("{id}")]
+[ProducesResponseType(200)]
+[ProducesResponseType(403)] //Hinzugefügt
+[ProducesResponseType(404)]
+
+public ActionResult Update(int id, NewsWriteDto request)
+{
+  return NotFound(string.Format("News {0} not found", id));
+}
+//
+if (!_userService.IsAdmin() && _userService.GetUserId() != news.AuthorId)
+{
+  return Forbid();
+}
+//Neu Hinzugefügt
+
+//noch mehr code...
+
+[HttpDelete("{id}")]
+[ProducesResponseType(200)]
+[ProducesResponseType(403)] //Neu Hinzugefügt
+[ProducesResponseType(404)]
+
+public ActionResult Delete(int id)
+{
+  return NotFound(string.Format("News {0} not found", id));
+}
+
+//
+if (!_userService.IsAdmin() && _userService.GetUserId() != news.AuthorId)
+{
+  return Forbid();
+}
+//Neu hinzugefügt
+
+```
+
 
 ## **_Handlungsziel 2_**
 
