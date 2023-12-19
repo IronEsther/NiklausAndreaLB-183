@@ -414,7 +414,7 @@ builder.Host.ConfigureLogging(logging =>
 
 Artefakt: Verbessertes Logging in verschiedenen Teilen der Anwendung
 
-csharp
+```csharp
 
 // LoginController.cs
 
@@ -470,6 +470,7 @@ builder.Host.ConfigureLogging(logging =>
     logging.AddConsole(); // Console Output
     logging.AddDebug(); // Debugging Console Output
 });
+```
 
 Erklärung des Artefakts:
 Das Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. Durch die Hinzufügung des ILogger-Parameters in den Controllern und die Konfiguration im Programm.cs wird detailliertes Logging implementiert, um wichtige Informationen über den Anwendungsstatus zu erhalten.
