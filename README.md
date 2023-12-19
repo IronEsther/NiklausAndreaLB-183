@@ -52,25 +52,26 @@ if (!_userService.IsAdmin() && _userService.GetUserId() != news.AuthorId)
 
 //In diesem Code wurde nichts gelöscht
 ```
-**Wie habe ich dieses Handlungsziel erreicht:**
 
-Im Ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie Zum Beispiel ```vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```.
+**Wie habe ich dieses Handlungsziel erreicht:**
+Im Ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie zum Beispiel ```Vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```.
 
 Beim Praktischen Teil, Auftrag ```LA_183_10_Business_Logic```, mussten wir bei der App den Newseintrag Security verändern. Der Fehler war derjenige, dass jeder, wer die ID des News Eintrags kennt, dieser bearbeiten oder löschen kann. Der Benutzer / die Zugriffsrechte werden im Backend nicht geprüft. Dies mussten wir so umprogrammieren, dass der normale Benutzer nur noch ihre eigenen News bearbeiten und löschen kann.
 Somit habe ich dieses Handlungsziel erreicht, indem ich die Zugriffsrechte, wie im Auftrag ```LA_183_10_Business_Logic``` gefordert, verbessert habe habe.
 
 
 **Erklärung des Artefakts:**
-Die Codeänderungen im NewsController.cs wurden vorgenommen, um sicherzustellen, dass ein normaler Benutzer nur seine eigenen News bearbeiten und löschen kann. Die Überprüfung der Benutzerrechte wurde durch Hinzufügen von Bedingungen vor dem Aktualisieren und Löschen von News implementiert.
+Der Artefakt belegt die Codeänderungen, welche ich in NewsController.cs vorgenommen habe, um die Applikation besser zu schützen. Somit wird sichergestellt, dass ein normaler Benutzer nur seine eigenen News bearbeiten und löschen kann. Die Überprüfung der Benutzerrechte wurde durch Hinzufügen von Bedingungen vor dem Aktualisieren und Löschen von News hinzugefügt.
 
 **Kritische Bewertung:**
-Die implementierten Änderungen sind wirksam und erfüllen das Handlungsziel erfolgreich. Die Überprüfung der Benutzerrechte wurde korrekt eingeführt, um unbefugte Bearbeitung und Löschung von News zu verhindern.
+Die verschiedene Änderungen sind erfolgreich und erfüllen das Handlungsziel. Die Überprüfung der Benutzerrechte wurde korrekt eingeführt, um nicht befugte Bearbeitung und Löschung von News zu verhindern. Der Artefakt ist strukturiert und mit dem Screenshot ist es einfach, dies zu intepretieren und lesen. 
 
-**Beweis der Durchführung (Screenshot):**
+**Erklärung des Screenshots:**
 Der User konnte mit Adminrechte einen 'AdminNews' erstellen (und kann diese immer noch bearbeiten.) Nach der Änderung kommt der Error 401 (siehe unterer Screenshot), wenn man versucht, einen Newsbeitrag als Admin zu erstellen, wenn man mit dem User Konto angemeldet ist.
 
-
 ## **_Handlungsziel 2_**
+
+Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_05_SQLInjection genommen.
 
 **Artefakt: Codeabschnitt in der Login-Methode für SQL Injection-Schutz:**
 ```csharp
@@ -99,15 +100,10 @@ public ActionResult<User> Login(LoginDto request)
 
 User? user= _context.Users.FromSqlRaw(sql).FirstOrDefault(); //Dieser alter Code wurde gelöscht
 
-    if (user == null)
-    {
-        return Unauthorized("login failed");
-    }
-
-    return Ok(CreateToken(user));
+//mehr code
 }
-
 ```
+
 **Erklärung des Artefakts:**
 Die Codeänderungen in der Login-Methode wurden vorgenommen, um SQL-Injection-Angriffe zu verhindern. Hierbei wird die Eingabe des Benutzernamens und des Passworts auf Gültigkeit überprüft und anschließend wird das Passwort als Hashwert in der Datenbank abgeglichen.
 
@@ -137,11 +133,14 @@ Die implementierten Änderungen bieten eine grundlegende Sicherheit gegen SQL-In
 
 //viiiel mehr code :D
 ```
+**Wie wurde das Handlungsziel erreicht**
+Das Handlungsziel wurde erreicht, indem ich den Code verändert habe, um die Sicherheitslücke zu schliessen. Dabei habe ich die Sicherheitslücke und die Ursache von dem in der Applikation erkennt und diese gehoben habe, was nachweist, dass ich dieses Handlungsziel erfolgreich gelöst und verstanden habe. 
+
 **Erklärung des Artefakts:**
-Die Codeänderungen wurden vorgenommen, um einen XSS-Schutz zu implementieren. Durch Verwendung von HttpUtility.HtmlEncode wird sichergestellt, dass potenziell schädlicher HTML-Code in den News-Headern und -Details korrekt kodiert wird, bevor sie in die Datenbank geschrieben werden.
+Der Artefakt zeigt die veraltete und die neue Version im Code. Im Veralteten Code bestand die Gefahr von einer SQL-Injection beim Einloggen. Dies wurde im Neuen Code aufgehoben, damit sich kein unauthorisierter Benutzer mit SQL Befehle wie -- vor dem Passwort schreiben könnte, etc. und somit ohne das Passwort anzugeben/wissen, sich in die Applikation einloggen zu können. Somit sind die Eingaben des Benutzers nicht mehr direkt in der SQL-Tabelle, sondern als separate Variable gespeichert. 
 
 **Kritische Bewertung:**
-Die implementierten Änderungen bieten eine wirksame Schutzmaßnahme gegen XSS-Angriffe, indem verhindert wird, dass nicht vertrauenswürdiger HTML-Code in den News-Headern und -Details gespeichert wird.
+Die Aufträge von diesem Handlungsziel waren verständlich zu lösen, was auch dazu führte, dass ich den Artefakt wie auch die Erklärung gut und schnell machen konnte. Ich hatte keine Schwierigkeiten dabei. Beim Erstellen des Artefakt habe ich auch geschaut, dass der Code sauber und verständlich mit den verschiedenen Änderungen gestalten ist. Die Änderungen im Code sind jedoch nur minimal und könnten erweitert werden, damit die Applikation noch sicherer wäre.
 
 **Erklärung Auftrag Unsaubere_API:**
 
