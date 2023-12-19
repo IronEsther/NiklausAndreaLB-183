@@ -2,7 +2,7 @@
 Dies ist eine sehr coole LB o.o
 
 ## Einleitung
-Dies ist die Leistungsbeurteilung von Andrea Niklaus. In diesem Modul 183 geht um Applikationssicherheit implementieren. In diesem Portfolio werde ich die Handlungsziele in je einem Abschnitt nachweisen, welche auch je mindistens einen Artefakt haben. 
+Dies ist die Leistungsbeurteilung von Andrea Niklaus. Im Modul 183 geht um Applikationssicherheit implementieren. In diesem Portfolio werde ich die Handlungsziele in je einem Abschnitt nachweisen, welche auch je mindistens einen Artefakt haben. 
 
 ## _Handlungsziel 1_
 
