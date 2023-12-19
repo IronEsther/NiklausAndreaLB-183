@@ -54,13 +54,19 @@ if (!_userService.IsAdmin() && _userService.GetUserId() != news.AuthorId)
 //In diesem Code wurde nichts gelöscht
 ```
 
+#### Screenshots:
+
+![HZ1_1](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/e254fa13-6a71-4088-a521-920748630f7a)
+![HZ1_2](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/6d74f29f-f302-4dbf-a987-7a7d59d0d002)
+![HZ1_3](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/699709b4-0d24-40ca-b479-d0dd81160b43)
+
+
 ### Wie habe ich dieses Handlungsziel erreicht:
 
 Im Ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie zum Beispiel ```Vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```.
 
 Beim Praktischen Teil, Auftrag ```LA_183_10_Business_Logic```, mussten wir bei der App den Newseintrag Security verändern. Der Fehler war derjenige, dass jeder, wer die ID des News Eintrags kennt, dieser bearbeiten oder löschen kann. Der Benutzer / die Zugriffsrechte werden im Backend nicht geprüft. Dies mussten wir so umprogrammieren, dass der normale Benutzer nur noch ihre eigenen News bearbeiten und löschen kann.
 Somit habe ich dieses Handlungsziel erreicht, indem ich die Zugriffsrechte, wie im Auftrag ```LA_183_10_Business_Logic``` gefordert, verbessert habe habe.
-
 
 ### Erklärung des Artefakts:
 
@@ -144,6 +150,14 @@ Die Aufträge von diesem Handlungsziel waren verständlich zu lösen, was auch d
 
 //viiiel mehr code :D
 ```
+### Screenshots
+
+Vor der Änderung vom Code:
+![HZ2_1](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/7793005e-56f8-4118-af9e-b17e20968c7f)
+
+Nach der Änderung vom Code:
+![HZ2_2](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/0d8d9605-44fd-4757-95ed-3e5edeaaee40)
+
 ### Wie wurde das Handlungsziel erreicht
 
 Das Handlungsziel wurde erreicht, indem der Code im NewsController.cs angepasst wurde, um XSS-Sicherheitslücken zu schließen. Durch die Verwendung von ```HttpUtility.HtmlEncode``` wurde sichergestellt, dass Benutzereingaben, insbesondere im Zusammenhang mit den Feldern Header und Detail, vor der Ausgabe auf der Webseite korrekt codiert wurden. Dadurch wird das Risiko von Cross-Site Scripting (XSS) minimiert. Cross-Site Scripting ist deshalb gefährlich, weil Benutzer über dies JavaScript-Befehle (über Eingabefelder) senden kann, um die Website zu schädigen.
@@ -248,15 +262,15 @@ Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_0
 ```
 ### Wie wurde das Handlungsziel erreicht
 
+Das Handlungsziel wurde erreicht, indem der Code im LoginController.cs angepasst wurde, um Broken Access Control zu beheben. Die Änderungen umfassen den Ersatz von direkten SQL-Abfragen durch sicherere Abfragen über Entity Framework Core. Dies gewährleistet einen sicheren Zugriff auf Benutzerinformationen und reduziert das Risiko von SQL-Injection-Angriffen.
 
 ### Erklärung des Artefakts:
 
-Die Codeänderungen wurden vorgenommen, um Broken Access Control zu beheben. Statt direkter SQL-Abfragen werden die Benutzerinformationen durch Entity Framework Core mit sicheren Abfragen abgerufen.
+Der Artefakt zeigt den relevanten Codeausschnitt aus dem Auftrag LA_183_07_BrokenAccessControl. Die Veränderungen betreffen die Art und Weise, wie Benutzerinformationen abgerufen werden, um sicherzustellen, dass der Zugriff auf die Datenbank sicherer ist. Die Verwendung von Entity Framework Core ersetzt die zuvor verwendeten direkten SQL-Abfragen.
 
 ### Kritische Bewertung:
 
-Die implementierten Änderungen bieten eine verbesserte Sicherheit durch die Verwendung von Entity Framework Core für den Datenbankzugriff anstelle von direkten SQL-Abfragen. Dies verringert das Risiko von SQL-Injection-Angriffen erheblich.
-
+Die Umsetzung des Handlungsziels ist effektiv und verbessert die Sicherheit der Anwendung erheblich. Der Wechsel von direkten SQL-Abfragen zu Entity Framework Core trägt dazu bei, das Risiko von Broken Access Control und SQL-Injection-Angriffen zu minimieren. 
 
 ## **_Handlungsziel 4_**
 
@@ -322,6 +336,16 @@ private string validateNewPasswort(string newPassword)
 
 return "";
 ```
+
+### Screenshots:
+
+Bei einem ungültigen altes Passwort:
+![HZ4_1](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/76626c1a-9852-4dc1-a6f4-8c02285d19b4)
+
+Bei einem gültigen altes Passwort:
+![HZ4_2](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/2cd6fce5-a1e3-4269-b67f-6413d097ce2c)
+
+
 ### Wie wurde das Handlungsziel erreicht
 
 Ich habe das Handlungsziel erreicht, indem ich im Artefakt hinzugefügt habe, dass man das altes Passwort angeben muss, um es zu ändern. Dabei werden sicherheitsrelevante Faktoren berücksichtigt. 
