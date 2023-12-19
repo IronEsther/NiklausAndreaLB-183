@@ -412,66 +412,6 @@ builder.Host.ConfigureLogging(logging =>
 
 ```
 
-Artefakt: Verbessertes Logging in verschiedenen Teilen der Anwendung
-
-```csharp
-
-// LoginController.cs
-
-// Alle using directories 
-
-public class LoginController : ControllerBase
-{
-    // Hinzugefügt:
-    private readonly ILogger _logger;
-
-    // Gelöscht, weil es zu unspezifisch war:
-    public LoginController(NewsAppContext context, IConfiguration configuration)
-
-    // Neu hinzugefügt, viel spezifischer sogar!! :O :
-    public LoginController(ILogger<LoginController> logger, NewsAppContext context, IConfiguration configuration)
-    {
-        _logger = logger;
-
-        // Mehr Code :O
-
-        // Neu Hinzugefügt:
-
-        _logger.LogWarning($"login failed for user '{request.Username}'");
-        _logger.LogInformation($"login successful for user '{request.Username}'");
-    }
-
-// NewsController.cs
-public class NewsController : ControllerBase
-{
-    // Neu Hinzugefügt, verstreut über dem Code:
-    private readonly ILogger _logger;
-    
-    // Gelöscht, Grund war, weil es zu unspezifisch war:
-    public NewsController(NewsAppContext context, IUserService userService)
-    
-    // Hinzugefügt:
-    public NewsController(ILogger<NewsController> logger, NewsAppContext context, IUserService userService)
-    
-    _logger.LogInformation($"news entry created by {_userService.GetUsername()}");
-    _logger.LogWarning($"user {_userService.GetUsername()} tried to edit foreign news (id: {id})");
-    _logger.LogInformation($"news entry {id} updated by {_userService.GetUsername()}");
-    _logger.LogWarning($"user {_userService.GetUsername()} tried to delete foreign news (id: {id})");
-    _logger.LogInformation($"news entry {id} deleted by {_userService.GetUsername()}");
-
-// Programm.cs
-
-// Neu Hinzugefügt :D
-
-// Logging Configuration
-builder.Host.ConfigureLogging(logging =>
-{
-    logging.ClearProviders();
-    logging.AddConsole(); // Console Output
-    logging.AddDebug(); // Debugging Console Output
-});
-```
-
 Erklärung des Artefakts:
 Das Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. Durch die Hinzufügung des ILogger-Parameters in den Controllern und die Konfiguration im Programm.cs wird detailliertes Logging implementiert, um wichtige Informationen über den Anwendungsstatus zu erhalten.
 
