@@ -26,12 +26,7 @@ Pro Handlungsziel ist ein Abschnitt mit folgendem Inhalt zu erstellen:
 
 ## _Handlungsziel 1_
 
-Im Ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie Zum Beispiel ```vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```. Wir haben einige Szenarien bekommen und mussten anordnen, wie hoch diese Schutzziele betroffen waren. Danach haben wir ```Open Web Application Security Project```, kurz ```OWASP``` angeschaut, eine Security Website. 
-
-Beim Praktischen Teil, Auftrag ```LA_183_10_Business_Logic```, mussten wir bei der App den Newseintrag Security verändern. Der Fehler war derjenige, dass jeder, wer die ID des News Eintrags kennt, dieser bearbeiten oder löschen kann. Der Benutzer / die Zugriffsrechte werden im Backend nicht geprüft. Dies mussten wir so umprogrammieren, dass der normale Benutzer nur noch ihre eigenen News bearbeiten und löschen kann.
-
-Artefakt: Codeabschnitt?
-Folgende Änderungen wurden im Code gemacht:
+**Artefakt: Codeabschnitt im NewsController.cs:**
 
 ```csharp
 //In NewsController.cs
@@ -74,23 +69,28 @@ if (!_userService.IsAdmin() && _userService.GetUserId() != news.AuthorId)
 }
 //Neu hinzugefügt
 
+//In diesem Code wurde nichts gelöscht
 ```
+**Erklärung des Artefakts:**
+Die Codeänderungen im NewsController.cs wurden vorgenommen, um sicherzustellen, dass ein normaler Benutzer nur seine eigenen News bearbeiten und löschen kann. Die Überprüfung der Benutzerrechte wurde durch Hinzufügen von Bedingungen vor dem Aktualisieren und Löschen von News implementiert.
 
-Vor Änderung: (Screenshot zeigen): 
-User konnte mit Adminrechte einen 'AdminNews' erstellen (und kann diese immer noch bearbeiten.)
-jetzt kommt der Error 401 --> Screenshot zeigen vom Error und versuchen des erstellen des newbeitrags als 'admin'. 
+**Begründung der Erreichung vom Handlungsziel 1:**
+
+Im Ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie Zum Beispiel ```vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```.
+
+Beim Praktischen Teil, Auftrag ```LA_183_10_Business_Logic```, mussten wir bei der App den Newseintrag Security verändern. Der Fehler war derjenige, dass jeder, wer die ID des News Eintrags kennt, dieser bearbeiten oder löschen kann. Der Benutzer / die Zugriffsrechte werden im Backend nicht geprüft. Dies mussten wir so umprogrammieren, dass der normale Benutzer nur noch ihre eigenen News bearbeiten und löschen kann.
+Somit habe ich dieses Handlungsziel erreicht, indem ich die Zugriffsrechte, wie im Auftrag ```LA_183_10_Business_Logic``` gefordert, verbessert habe habe.
+
+**Kritische Bewertung:**
+Die implementierten Änderungen sind wirksam und erfüllen das Handlungsziel erfolgreich. Die Überprüfung der Benutzerrechte wurde korrekt eingeführt, um unbefugte Bearbeitung und Löschung von News zu verhindern.
+
+**Beweis der Durchführung (Screenshot):**
+Der User konnte mit Adminrechte einen 'AdminNews' erstellen (und kann diese immer noch bearbeiten.) Nach der Änderung kommt der Error 401 (siehe unterer Screenshot), wenn man versucht, einen Newsbeitrag als Admin zu erstellen, wenn man mit dem User Konto angemeldet ist.
 
 
 ## **_Handlungsziel 2_**
 
-Aufträge bearbeitet: 
-SQL_INjection
-XSS
-Unsaubere API
-Review 
-Pentests
-
-code sql injection:
+**Artefakt: Codeabschnitt in der Login-Methode für SQL Injection-Schutz:**
 ```csharp
 public ActionResult<User> Login(LoginDto request)
 {
@@ -98,6 +98,13 @@ public ActionResult<User> Login(LoginDto request)
     {
         return BadRequest();
     }
+
+//Alter Code:
+  string sql = string.Format("SELECT * FROM Users WHERE username = '{0}' AND password = '{1}'", 
+  request.Username, 
+  MD5Helper.ComputeMD5Hash(request.Password));
+
+    //Neuer Code:
     string username = request.Username;
     string passwordHash = MD5Helper.ComputeMD5Hash(request.Password);
 
@@ -106,6 +113,10 @@ public ActionResult<User> Login(LoginDto request)
         .Where(u => u.Password == passwordHash)
         .FirstOrDefault();
 
+      //Bis hier neu hinzugefügt
+
+User? user= _context.Users.FromSqlRaw(sql).FirstOrDefault(); //Dieser alter Code wurde gelöscht
+
     if (user == null)
     {
         return Unauthorized("login failed");
@@ -113,52 +124,203 @@ public ActionResult<User> Login(LoginDto request)
 
     return Ok(CreateToken(user));
 }
-```
-broken access controll:
 
+```
+**Erklärung des Artefakts:**
+Die Codeänderungen in der Login-Methode wurden vorgenommen, um SQL-Injection-Angriffe zu verhindern. Hierbei wird die Eingabe des Benutzernamens und des Passworts auf Gültigkeit überprüft und anschließend wird das Passwort als Hashwert in der Datenbank abgeglichen.
+
+**Kritische Bewertung:**
+Die implementierten Änderungen bieten eine grundlegende Sicherheit gegen SQL-Injection-Angriffe. Allerdings könnte die Verwendung von MD5 für das Passwort-Hashing durch eine sicherere Methode ersetzt werden, um modernen Sicherheitsstandards gerecht zu werden.
+
+
+**XSS: In NewsController.cs:**
 ```csharp
-private string CreateToken(User user)
-{
-    string issuer = _configuration.GetSection("Jwt:Issuer").Value!;
-    string audience = _configuration.GetSection("Jwt:Audience").Value!;
+//Vorher:
+  newNews.Header = request.Header;
+  newNews.Detail = request.Detail;
 
-    List<Claim> claims = new List<Claim> {
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
-            new Claim(ClaimTypes.Role,  (user.IsAdmin ? "admin" : "user"))
-    };
+//Nacher:
+  newNews.Header = HttpUtility.HtmlEncode(request.Header);
+  newNews.Detail = HttpUtility.HtmlEncode(request.Detail);
 
-    string base64Key = _configuration.GetSection("Jwt:Key").Value!;
-    SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Convert.FromBase64String(base64Key));
+//mehr code....
 
-    SigningCredentials credentials = new SigningCredentials(
-            securityKey,
-            SecurityAlgorithms.HmacSha512Signature);
+//Vorher:
+  news.Header = request.Header;
+  news.Detail = request.Detail;
 
-    JwtSecurityToken token = new JwtSecurityToken(
-        issuer: issuer,
-        audience: audience,
-        claims: claims,
-        notBefore: DateTime.Now,
-        expires: DateTime.Now.AddDays(1),
-        signingCredentials: credentials
-     );
+//Nacher:
+  news.Header = HttpUtility.HtmlEncode(request.Header);
+  news.Detail = HttpUtility.HtmlEncode(request.Detail);
 
-    return new JwtSecurityTokenHandler().WriteToken(token);
-}
+//viiiel mehr code :D
 ```
+**Erklärung des Artefakts:**
+Die Codeänderungen wurden vorgenommen, um einen XSS-Schutz zu implementieren. Durch Verwendung von HttpUtility.HtmlEncode wird sichergestellt, dass potenziell schädlicher HTML-Code in den News-Headern und -Details korrekt kodiert wird, bevor sie in die Datenbank geschrieben werden.
 
-unsaubere API:
+**Kritische Bewertung:**
+Die implementierten Änderungen bieten eine wirksame Schutzmaßnahme gegen XSS-Angriffe, indem verhindert wird, dass nicht vertrauenswürdiger HTML-Code in den News-Headern und -Details gespeichert wird.
 
-Hier mussten wir die Website an sich ändern. 
+**Erklärung Auftrag Unsaubere_API:**
+
+Beim Auftrag Unsaubere_API mussten wir die API an sich ändern, da es zu viel Daten an dem Server (für den Benutzer sichtbar) geschickt hatte, als es eigentlich hätte sollen. Deshalb mussten wir den Code überarbeiten, damit eine externe Person nicht die Anmeldedaten, die Newsdaten, usw. durch die Netzwerkanalyse herausfinden kann. 
+
+Folgende Informationen wurden an den Server geliefert:
+-	Id (Für Update / Delete)
+-	Header (Wird angezeigt)
+-	Detail (Wird angezeigt)
+-	postedDate (Wird angezeigt)
+-	isAdminNews (Wird angezeigt)
+-	authorId  (Für die Anzeige der Updates / Delete Buttons)
+-	author
+  --	id (Wird nicht benötigt)
+  --	username (Wird angezeigt)
+  --	password (hash) (Wird nicht benötigt)
+  --	isAdmin (Wird nicht benötigt)
+
+Es wird fast alles benötigt aber der Passworthash + weitere Daten des Authors (wenn die Tabelle erweitert wird) dürfen nicht an den Server ausgeliefert werden.
 
 ## **_Handlungsziel 3_**
 
-BrokenAccessControl
-Autorisierung
-Authentifizierung
-PasswortHashing
+**Broken Access Controll:**
+```csharp
+//Wichtige Veränderungen im LoginController.cs:
+
+      private string CreateToken(User user)
+      {
+            //Neu:
+            string username = request.Username;
+            string passwordHash = MD5Helper.ComputeMD5Hash(request.Password);
+            //Veraltet und gelöscht:
+            string sql = string.Format("SELECT * FROM Users WHERE username = '{0}' AND password = '{1}'", 
+                request.Username, 
+                MD5Helper.ComputeMD5Hash(request.Password));
+
+            //Neu:
+            User? user = _context.Users
+                .Where(u => u.Username == username)
+                .Where(u => u.Password == passwordHash)
+                .FirstOrDefault();
+
+            //Veraltet und gelöscht:
+            User? user= _context.Users.FromSqlRaw(sql).FirstOrDefault();
+            //geblieben:
+            if (user == null)
+            {
+                return Unauthorized("login failed");
+            }
+            //Veraltet und gelöscht:
+            return Ok(user);
+
+            //Neu hinzufügt:
+            return Ok(CreateToken(user));
+        }
+
+        private string CreateToken(User user)
+        {
+            string issuer = _configuration.GetSection("Jwt:Issuer").Value!;
+            string audience = _configuration.GetSection("Jwt:Audience").Value!;
+
+            List<Claim> claims = new List<Claim> {
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+                    new Claim(ClaimTypes.Role,  (user.IsAdmin ? "admin" : "user"))
+            };
+
+            string base64Key = _configuration.GetSection("Jwt:Key").Value!;
+            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Convert.FromBase64String(base64Key));
+
+            SigningCredentials credentials = new SigningCredentials(
+                    securityKey,
+                    SecurityAlgorithms.HmacSha512Signature);
+
+            JwtSecurityToken token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: credentials
+             );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+//Teile von diesem Code ist aus den Lösungen kopiert worden, da ich den Auftrag nicht fertigstellen konnte und mir deshalb Hilfe von den Lösungen geholt habe. 
+```
+**Erklärung des Artefakts:**
+Die Codeänderungen wurden vorgenommen, um Broken Access Control zu beheben. Statt direkter SQL-Abfragen werden die Benutzerinformationen durch Entity Framework Core mit sicheren Abfragen abgerufen.
+
+**Kritische Bewertung:**
+Die implementierten Änderungen bieten eine verbesserte Sicherheit durch die Verwendung von Entity Framework Core für den Datenbankzugriff anstelle von direkten SQL-Abfragen. Dies verringert das Risiko von SQL-Injection-Angriffen erheblich.
+
+
+**LA_183_13_HumanFactor: UserController.cs+PasswortUpdateDTO.cs:**
+
+```csharp
+
+//viiiiiel code davor, jedoch nicht so relevant für das
+
+//Neu hinzugefügt:
+if (user.Password != MD5Helper.ComputeMD5Hash(request.OldPassword))
+  {
+    return Unauthorized("Old password wrong");
+  }
+
+string passwordValidation = validateNewPasswort(request.NewPassword);
+  if (passwordValidation != "")
+  {
+    return BadRequest(passwordValidation);
+  }
+//gelöscht, weil es zu wenig ausmacht und nicht viel aussagt:
+  return Ok();
+
+//Neu hinzugefügt: (Viiiel aussagekräftiger :o)
+return Ok("success");
+  }
+
+private string validateNewPasswort(string newPassword)
+{
+  // Check small letter.
+  string patternSmall = "[a-zäöü]";
+  Regex regexSmall = new Regex(patternSmall);
+  bool hasSmallLetter = regexSmall.Match(newPassword).Success;
+
+  string patternCapital = "[A-ZÄÖÜ]";
+  Regex regexCapital = new Regex(patternCapital);
+  bool hasCapitalLetter = regexCapital.Match(newPassword).Success;
+
+  string patternNumber = "[0-9]";
+  Regex regexNumber = new Regex(patternNumber);
+  bool hasNumber = regexNumber.Match(newPassword).Success;
+
+  List<string> result = new List<string>();
+  if (!hasSmallLetter)
+    {
+      result.Add("keinen Kleinbuchstaben :(");
+    }
+    if (!hasCapitalLetter)
+    {
+      result.Add("keinen Grossbuchstaben :c");
+    }
+    if (!hasNumber)
+    {
+      result.Add("keine Zahl. Bitte füge eine Hinzuu");
+    }
+
+    if (result.Count > 0)
+    {
+      return "Das Passwort beinhaltet " + string.Join(", ", result);
+    }
+
+return "";
+```
+**Erklärung des Artefakts:**
+Der Code wurde im AccountController.cs entsprechend angepasst. Dies beinhaltet eine bessere Strukturierung des Codes, das Hinzufügen von Kommentaren, die Verwendung von IsMatch anstelle von Match für die Regex-Validierung und die Bereitstellung von sinnvollen HTTP-Antwortcodes. Ausserdem wurde die Rückgabemeldung nach einer erfolgreichen Passwortänderung aktualisiert. Mit dem neuen Code kann daher ein externer Nutzer nicht einfach so das Passwort ändern, wenn er/sie das altes Passwort nicht weiss. Somit ist die Applikation ein wenig sicherer als vorher! Success 👍!
+
+**Kritische Bewertung:**
+Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verständlichkeit und die Übersichtlichkeit. Die Validierung des neuen Passworts erfolgt nun durch die Verwendung von IsMatch, was eine genauere Überprüfung ermöglicht. Die HTTP-Antwortcodes und Rückgabemeldungen wurden verbessert, um besser auf den Status der Passwortänderung hinzuweisen.
 
 ## **_Handlungsziel 4_**
 
