@@ -110,12 +110,15 @@ User? user= _context.Users.FromSqlRaw(sql).FirstOrDefault(); //Dieser alter Code
 }
 ```
 ### Wie wurde das Handlungsziel erreicht
+
 Das Handlungsziel wurde erreicht, indem ich den Code verändert habe, um die Sicherheitslücke zu schliessen. Dabei habe ich die Sicherheitslücke und die Ursache von dem in der Applikation erkennt und diese gehoben habe, was nachweist, dass ich dieses Handlungsziel erfolgreich gelöst und verstanden habe. 
 
 ### Erklärung des Artefakts:
+
 Der Artefakt zeigt die veraltete und die neue Version im Code. Im Veralteten Code bestand die Gefahr von einer SQL-Injection beim Einloggen. Dies wurde im Neuen Code aufgehoben, damit sich kein unauthorisierter Benutzer mit SQL Befehle wie -- vor dem Passwort schreiben könnte, etc. und somit ohne das Passwort anzugeben/wissen, sich in die Applikation einloggen zu können. Somit sind die Eingaben des Benutzers nicht mehr direkt in der SQL-Tabelle, sondern als separate Variable gespeichert. 
 
 ### Kritische Bewertung:
+
 Die Aufträge von diesem Handlungsziel waren verständlich zu lösen, was auch dazu führte, dass ich den Artefakt wie auch die Erklärung gut und schnell machen konnte. Ich hatte keine Schwierigkeiten dabei. Beim Erstellen des Artefakt habe ich auch geschaut, dass der Code sauber und verständlich mit den verschiedenen Änderungen gestalten ist. Die Änderungen im Code sind jedoch nur minimal und könnten erweitert werden, damit die Applikation noch sicherer wäre.
 
 ### XSS: In NewsController.cs:
@@ -142,12 +145,15 @@ Die Aufträge von diesem Handlungsziel waren verständlich zu lösen, was auch d
 //viiiel mehr code :D
 ```
 ### Wie wurde das Handlungsziel erreicht
+
 Das Handlungsziel wurde erreicht, indem der Code im NewsController.cs angepasst wurde, um XSS-Sicherheitslücken zu schließen. Durch die Verwendung von ```HttpUtility.HtmlEncode``` wurde sichergestellt, dass Benutzereingaben, insbesondere im Zusammenhang mit den Feldern Header und Detail, vor der Ausgabe auf der Webseite korrekt codiert wurden. Dadurch wird das Risiko von Cross-Site Scripting (XSS) minimiert. Cross-Site Scripting ist deshalb gefährlich, weil Benutzer über dies JavaScript-Befehle (über Eingabefelder) senden kann, um die Website zu schädigen.
 
 ### Erklärung des Artefakts:
+
 Das Artefakt zeigt den Vergleich zwischen dem vorherigen Code und dem aktualisierten Code im NewsController.cs. In der vorherigen Version wurden Benutzereingaben direkt in die Header- und Detail-Felder der News übernommen, ohne auf mögliche XSS-Angriffe zu reagieren. Die aktualisierte Version verwendet ```HttpUtility.HtmlEncode```, um sicherzustellen, dass alle potenziell gefährlichen Zeichen in den Benutzereingaben korrekt codiert werden. Dies schützt die Anwendung vor XSS-Angriffen, bei denen bösartiger Code (ganz schlimm :o) in die Webseite eingefügt wird.
 
 ### Kritische Bewertung:
+
 Die Umsetzung des Handlungsziels ist effektiv und entspricht bewährten Sicherheitspraktiken. Die Verwendung von HttpUtility.```HtmlEncode``` ist eine gute Methode, um XSS-Angriffe zu verhindern. Die minimalen Änderungen im Code sind klar und verständlich. Um die Sicherheit weiter zu verbessern, könnten zusätzliche Validierungen und Sicherheitsmechanismen in Erwägung gezogen werden.
 
 ### Erklärung Auftrag Unsaubere_API:
@@ -244,13 +250,16 @@ Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_0
 
 
 ### Erklärung des Artefakts:
+
 Die Codeänderungen wurden vorgenommen, um Broken Access Control zu beheben. Statt direkter SQL-Abfragen werden die Benutzerinformationen durch Entity Framework Core mit sicheren Abfragen abgerufen.
 
 ### Kritische Bewertung:
+
 Die implementierten Änderungen bieten eine verbesserte Sicherheit durch die Verwendung von Entity Framework Core für den Datenbankzugriff anstelle von direkten SQL-Abfragen. Dies verringert das Risiko von SQL-Injection-Angriffen erheblich.
 
 
 ## **_Handlungsziel 4_**
+
 Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_13_HumanFactor genommen.
 
 ### HumanFactor: UserController.cs+PasswortUpdateDTO.cs:
@@ -317,9 +326,11 @@ return "";
 
 
 ### Erklärung des Artefakts:
+
 Der Code wurde im AccountController.cs entsprechend angepasst. Dies beinhaltet eine bessere Strukturierung des Codes, das Hinzufügen von Kommentaren, die Verwendung von IsMatch anstelle von Match für die Regex-Validierung und die Bereitstellung von sinnvollen HTTP-Antwortcodes. Ausserdem wurde die Rückgabemeldung nach einer erfolgreichen Passwortänderung aktualisiert. Mit dem neuen Code kann daher ein externer Nutzer nicht einfach so das Passwort ändern, wenn er/sie das altes Passwort nicht weiss. Somit ist die Applikation ein wenig sicherer als vorher! Success 👍!
 
 ### Kritische Bewertung:
+
 Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verständlichkeit und die Übersichtlichkeit. Die Validierung des neuen Passworts erfolgt nun durch die Verwendung von IsMatch, was eine genauere Überprüfung ermöglicht. Die HTTP-Antwortcodes und Rückgabemeldungen wurden verbessert, um besser auf den Status der Passwortänderung hinzuweisen.
 
 ### Artefakt: Geänderte appsettings.json - Sicherung des Secrets im Repository
@@ -337,15 +348,18 @@ Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verstä
 
 
 ### Erklärung des Artefakts:
+
 Die Datei appsettings.json enthält sensible Informationen wie Schlüssel und Geheimnisse für die Anwendung. Das Artefakt zeigt die Entfernung des unsicheren Codes und die Einführung einer sicheren Praxis, indem der ursprüngliche Schlüssel entfernt wurde und ein neuer Platzhalter-Schlüssel hinzugefügt wurde. Dies gewährleistet, dass das Geheimnis nicht im Repository gespeichert wird.
 
 ### Kritische Bewertung:
+
 Die Umsetzung des Artefakts ist wirksam und erfüllt das Handlungsziel, sensible Informationen, insbesondere Geheimnisse und Schlüssel, sicher im Repository zu speichern. Die Verwendung eines Platzhalter-Schlüssels ist eine gute Praxis, um sicherzustellen, dass keine vertraulichen Daten öffentlich zugänglich sind. Es ist jedoch wichtig sicherzustellen, dass dieser Platzhalter regelmässig aktualisiert wird, um die Sicherheit weiter zu gewährleisten.
 
 
 ## **_Handlungsziel 5_**
 
 ### Artefakt
+
 Für den Logging Auftrag, LA_183_17_Logging, habe ich Inspiration von dem Code im Auftrag geholt und mit den Musterlösungen verglichen und verbessert.
 
 ```csharp
@@ -409,10 +423,13 @@ builder.Host.ConfigureLogging(logging =>
 
 
 ### Erklärung des Artefakts:
+
 Das Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. Durch die Hinzufügung des ILogger-Parameters in den Controllern und die Konfiguration im Programm.cs wird detailliertes Logging implementiert, um wichtige Informationen über den Anwendungsstatus zu erhalten.
 
 ### Kritische Bewertung:
+
 Die Implementierung des verbesserten Loggings erfüllt das Handlungsziel effektiv, indem sie eine detaillierte Protokollierung in verschiedenen Teilen der Anwendung ermöglicht. Die Verwendung von Log-Leveln wie Information und Warning bietet Flexibilität für unterschiedliche Situationen. Es ist jedoch wichtig sicherzustellen, dass die Log-Meldungen aussagekräftig und hilfreich sind, um bei der Fehlersuche und Überwachung effektiv zu sein.
 
 ## Selbsteinschätzung des Erreichungsgrades der Kompetenz des Moduls
+
 Geben Sie eine Selbsteinschätzung zu der Kompetenz in diesem Modul ab. Schätzen Sie selbst ein, inwiefern Sie die Kompetenz dieses Moduls erreicht haben und inwiefern nicht. Es geht in diesem Abschnitt nicht darum, auf die einzelnen Handlungsziele einzugehen. Das haben Sie bereits gemacht. Begründen Sie ihre Aussagen.
