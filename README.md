@@ -155,12 +155,22 @@ Hier mussten wir die Website an sich ändern.
 
 ## **_Handlungsziel 3_**
 
+BrokenAccessControl
+Autorisierung
+Authentifizierung
+PasswortHashing
 
 ## **_Handlungsziel 4_**
 
+SecretImRepository
+HumanFactor
+DefensiveProgrammierung
 
 ## **_Handlungsziel 5_**
 
+Logging
+Zusätzliche Lern-Arbeitsaufträge:
+AuditTrail
 
 ## Selbsteinschätzung des Erreichungsgrades der Kompetenz des Moduls
 Geben Sie eine Selbsteinschätzung zu der Kompetenz in diesem Modul ab. Schätzen Sie selbst ein, inwiefern Sie die Kompetenz dieses Moduls erreicht haben und inwiefern nicht. Es geht in diesem Abschnitt nicht darum, auf die einzelnen Handlungsziele einzugehen. Das haben Sie bereits gemacht. Begründen Sie ihre Aussagen.
