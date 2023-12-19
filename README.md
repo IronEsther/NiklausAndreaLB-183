@@ -1,10 +1,141 @@
-# NiklausAndrea_LB183
-Dies ist eine sehr coole LB o.o
+# NiklausAndreaLB-183
 
 ## Einleitung
 Dies ist die Leistungsbeurteilung von Andrea Niklaus. Im Modul 183 geht um Applikationssicherheit implementieren. In diesem Portfolio werde ich die Handlungsziele in je einem Abschnitt nachweisen, welche auch mindestens je ein Artefakt beinhalten werden.
 
 ## _Handlungsziel 1_
+
+| Sicherheitsrisiko |	Beschreibung |	Gegenmassnahmen |	Auswirkungen |
+| --- | --- | --- | --- |
+| Broken Access Control |	Unbefugte Benutzer können ausserhalb ihrer eigentlichen Berechtigungen handeln |	Session-Verwaltung, Verbesserte Zugriffskontrollen | Unberechtigter Datenzugriff |
+| Cryptographic Failures | Sicherheitsmassnahmen, funktionieren nicht richtig, welche eigentlich Daten schützen sollten. | Die sicheren Verschlüsselungsstandards benutzen und sensitive Informationen nicht unnötig speichern und darstellen | Sensible/Wichtige Daten werden gestohlen. |
+| Injection (wie zum Beispiel SQL) | Unerlaubter Zugriff auf Daten oder Befehlen in einer Anwendung. | Sichere API nutzen, Eingabevalidierung | Unerlaubte Code-ausführung und Zugriff |
+
+Quelle: [OWASP](https://owasp.org/Top10/)
+
+### Wie habe ich dieses Handlungsziel erreicht:
+
+Dieses Handlungsziel habe ich mit der Tabelle von der Website OWASP erreicht, welche im Auftrag verlinkt war. Damit habe ich dargelegt, dass ich die aktuellen Bedrohungen kenne und beschreiben kann. Im Auftrag selbst habe ich pro Problem die Auswirkungen und deren Gegenmassnahmen beschrieben, welche ich auch hier reinkopiert habe. 
+
+### Erklärung des Artefaktes:
+
+Das Artefakt/Die Tabelle stellt die 3 höchsten Bedrohungen dar. Dazu sieht man bei der Beschreibung, was die Bedrohung genau ist und welche Konzequenzen diese haben. Auch werden die Gegenmassnahmen beschrieben, um eine solche Bedrohung zu vermeiden. Wie oben schon erwähnt, habe ich diese Website von dem Auftrag, welche die Top 10 Bedrohungen zeigt, jedoch habe ich nur drei davon genommen. 
+
+### Kritische Bewertung:
+
+Das Tabellenlayout ist gut aufgebaut, damit Leser/innen dies gut lesen können. Während dem Erstellen des Artefakts jedoch hatte ich Zweifel, ob drei genug wären, jedoch habe ich mich nicht umentschieden und dies so gelassen. Vielleicht sollte ich nächstes Mal alles reintun, damit die Leser/innen die Website nicht extra nachschlagen müssen, um alle Bedrohungen zu sehen. 
+
+
+## **_Handlungsziel 2_**
+
+Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_05_SQLInjection genommen.
+
+### Artefakt: Codeabschnitt in der Login-Methode für SQL Injection-Schutz:**
+
+```csharp
+public ActionResult<User> Login(LoginDto request)
+{
+    if (request == null || request.Username.IsNullOrEmpty() || request.Password.IsNullOrEmpty())
+    {
+        return BadRequest();
+    }
+
+//Alter Code:
+  string sql = string.Format("SELECT * FROM Users WHERE username = '{0}' AND password = '{1}'", 
+  request.Username, 
+  MD5Helper.ComputeMD5Hash(request.Password));
+
+    //Neuer Code:
+    string username = request.Username;
+    string passwordHash = MD5Helper.ComputeMD5Hash(request.Password);
+
+    User? user = _context.Users
+        .Where(u => u.Username == username)
+        .Where(u => u.Password == passwordHash)
+        .FirstOrDefault();
+
+      //Bis hier neu hinzugefügt
+
+User? user= _context.Users.FromSqlRaw(sql).FirstOrDefault(); //Dieser alter Code wurde gelöscht
+
+//mehr code
+}
+```
+### Wie wurde das Handlungsziel erreicht
+
+Das Handlungsziel wurde erreicht, indem ich den Code verändert habe, um die Sicherheitslücke zu schliessen. Dabei habe ich die Sicherheitslücke und die Ursache von dem in der Applikation erkennt und diese gehoben habe, was nachweist, dass ich dieses Handlungsziel erfolgreich gelöst und verstanden habe. 
+
+### Erklärung des Artefaktes:
+
+Das Artefakt zeigt die veraltete und die neue Version im Code. Im veralteten Code bestand die Gefahr von einer SQL-Injection beim Einloggen. Dies wurde im Neuen Code aufgehoben, damit sich kein unauthorisierter Benutzer mit SQL Befehle wie -- vor dem Passwort schreiben könnte, etc. und somit ohne das Passwort anzugeben/wissen, sich in die Applikation einloggen zu können. Somit sind die Eingaben des Benutzers nicht mehr direkt in der SQL-Tabelle, sondern als separate Variable gespeichert. 
+
+### Kritische Bewertung:
+
+Die Aufträge von diesem Handlungsziel waren verständlich zu lösen, was auch dazu führte, dass ich den Artefakt wie auch die Erklärung gut und schnell machen konnte. Ich hatte keine Schwierigkeiten dabei. Beim Erstellen des Artefaktes habe ich auch geschaut, dass der Code sauber und verständlich mit den verschiedenen Änderungen gestalten ist. Die Änderungen im Code sind jedoch nur minimal und könnten erweitert werden, damit die Applikation noch sicherer wäre.
+
+### XSS: In NewsController.cs:
+
+```csharp
+//Vorher:
+  newNews.Header = request.Header;
+  newNews.Detail = request.Detail;
+
+//Nacher:
+  newNews.Header = HttpUtility.HtmlEncode(request.Header);
+  newNews.Detail = HttpUtility.HtmlEncode(request.Detail);
+
+//mehr code....
+
+//Vorher:
+  news.Header = request.Header;
+  news.Detail = request.Detail;
+
+//Nacher:
+  news.Header = HttpUtility.HtmlEncode(request.Header);
+  news.Detail = HttpUtility.HtmlEncode(request.Detail);
+
+//viiiel mehr code :D
+```
+### Screenshots
+
+Vor der Änderung vom Code:
+![HZ2_1](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/7793005e-56f8-4118-af9e-b17e20968c7f)
+
+Nach der Änderung vom Code:
+![HZ2_2](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/0d8d9605-44fd-4757-95ed-3e5edeaaee40)
+
+### Wie wurde das Handlungsziel erreicht
+
+Das Handlungsziel wurde erreicht, indem der Code im NewsController.cs angepasst wurde, um XSS-Sicherheitslücken zu schließen. Durch die Verwendung von ```HttpUtility.HtmlEncode``` wurde sichergestellt, dass Benutzereingaben, insbesondere im Zusammenhang mit den Feldern Header und Detail, vor der Ausgabe auf der Webseite korrekt codiert wurden. Dadurch wird das Risiko von Cross-Site Scripting (XSS) minimiert. Cross-Site Scripting ist deshalb gefährlich, weil Benutzer über dies JavaScript-Befehle (über Eingabefelder) senden kann, um die Website zu schädigen.
+
+### Erklärung des Artefaktes:
+
+Das Artefakt zeigt den Vergleich zwischen dem vorherigen Code und dem aktualisierten Code im NewsController.cs. In der vorherigen Version wurden Benutzereingaben direkt in die Header- und Detail-Felder der News übernommen, ohne auf mögliche XSS-Angriffe zu reagieren. Die aktualisierte Version verwendet ```HttpUtility.HtmlEncode```, um sicherzustellen, dass alle potenziell gefährlichen Zeichen in den Benutzereingaben korrekt codiert werden. Dies schützt die Anwendung vor XSS-Angriffen, bei denen bösartiger Code (ganz schlimm :o) in die Webseite eingefügt wird.
+
+### Kritische Bewertung:
+
+Die Umsetzung des Handlungsziels ist effektiv und entspricht bewährten Sicherheitspraktiken. Die Verwendung von HttpUtility.```HtmlEncode``` ist eine gute Methode, um XSS-Angriffe zu verhindern. Die minimalen Änderungen im Code sind klar und verständlich. Um die Sicherheit weiter zu verbessern, könnten zusätzliche Validierungen und Sicherheitsmechanismen in Erwägung gezogen werden.
+
+### Erklärung Auftrag Unsaubere_API:
+
+Beim Auftrag Unsaubere_API mussten wir die API an sich ändern, da es zu viel Daten an dem Server (für den Benutzer sichtbar) geschickt hatte, als es eigentlich hätte sollen. Deshalb mussten wir den Code überarbeiten, damit eine externe Person nicht die Anmeldedaten, die Newsdaten, usw. durch die Netzwerkanalyse herausfinden kann. 
+
+Folgende Informationen wurden an den Server geliefert:
+-	Id (Für Update / Delete)
+-	Header (Wird angezeigt)
+-	Detail (Wird angezeigt)
+-	postedDate (Wird angezeigt)
+-	isAdminNews (Wird angezeigt)
+-	authorId  (Für die Anzeige der Updates / Delete Buttons)
+-	author
+  --	id (Wird nicht benötigt)
+  --	username (Wird angezeigt)
+  --	password (hash) (Wird nicht benötigt)
+  --	isAdmin (Wird nicht benötigt)
+
+Es wird fast alles benötigt aber der Passworthash + weitere Daten des Authors (wenn die Tabelle erweitert wird) dürfen nicht an den Server ausgeliefert werden.
+
+### Artefakt:
 
 Als Artefakt habe ich den Codeauschnitt und Screenshots in Relation mit diesem Codeabschnitt genommen:
 
@@ -63,137 +194,27 @@ if (!_userService.IsAdmin() && _userService.GetUserId() != news.AuthorId)
 
 ### Wie habe ich dieses Handlungsziel erreicht:
 
-Im Ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie zum Beispiel ```Vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```.
+Im ersten Handlungsziel haben wir die Infrastruktur eingerichtet, die InsecureApp heruntergeladen, gestartet und den Aufbau der App angeschaut. Dann haben wir einige wichtige Grundbegriffe zusammen angeschaut, welche für den Verlauf vom Modul wichtig waren, wie zum Beispiel ```Vertraulichkeit```, ```Integrität``` und ```Verfügbarkeit```.
 
-Beim Praktischen Teil, Auftrag ```LA_183_10_Business_Logic```, mussten wir bei der App den Newseintrag Security verändern. Der Fehler war derjenige, dass jeder, wer die ID des News Eintrags kennt, dieser bearbeiten oder löschen kann. Der Benutzer / die Zugriffsrechte werden im Backend nicht geprüft. Dies mussten wir so umprogrammieren, dass der normale Benutzer nur noch ihre eigenen News bearbeiten und löschen kann.
+Beim praktischen Teil, den Auftrag ```LA_183_10_Business_Logic```, mussten wir bei der App den Newseintrag-Security verbessern. Die Sicherheitslücke war derjenige, dass jeder, wer die ID des News Eintrags kennt, dieser bearbeiten oder löschen kann. Der Benutzer / die Zugriffsrechte werden im Backend nicht geprüft. Dies mussten wir so umprogrammieren, dass der normale Benutzer nur noch ihre eigenen News bearbeiten und löschen kann.
 Somit habe ich dieses Handlungsziel erreicht, indem ich die Zugriffsrechte, wie im Auftrag ```LA_183_10_Business_Logic``` gefordert, verbessert habe habe.
 
 ### Erklärung des Artefakts:
 
-Der Artefakt belegt die Codeänderungen, welche ich in NewsController.cs vorgenommen habe, um die Applikation besser zu schützen. Somit wird sichergestellt, dass ein normaler Benutzer nur seine eigenen News bearbeiten und löschen kann. Die Überprüfung der Benutzerrechte wurde durch Hinzufügen von Bedingungen vor dem Aktualisieren und Löschen von News hinzugefügt.
+Das Artefakt belegt die Codeänderungen, welche ich in NewsController.cs vorgenommen habe, um die Applikation besser zu schützen. Somit wird sichergestellt, dass ein normaler Benutzer nur seine eigenen News bearbeiten und löschen kann. Die Überprüfung der Benutzerrechte wurde durch Hinzufügen von Bedingungen vor dem Aktualisieren und Löschen von News hinzugefügt.
 
 ### Kritische Bewertung:
 
-Die verschiedene Änderungen sind erfolgreich und erfüllen das Handlungsziel. Die Überprüfung der Benutzerrechte wurde korrekt eingeführt, um nicht befugte Bearbeitung und Löschung von News zu verhindern. Der Artefakt ist strukturiert und mit dem Screenshot ist es einfach, dies zu intepretieren und lesen. 
+Die verschiedene Änderungen sind erfolgreich und erfüllen das Handlungsziel. Die Überprüfung der Benutzerrechte wurde korrekt eingeführt, um nicht befugte Bearbeitung und Löschung von News zu verhindern. Das Artefakt ist strukturiert und mit dem Screenshot ist es einfach, dies zu intepretieren und lesen. 
 
 ### Erklärung des Screenshots:
 
 Der User konnte mit Adminrechte einen 'AdminNews' erstellen (und kann diese immer noch bearbeiten.) Nach der Änderung kommt der Error 401 (siehe unterer Screenshot), wenn man versucht, einen Newsbeitrag als Admin zu erstellen, wenn man mit dem User Konto angemeldet ist.
 
-## **_Handlungsziel 2_**
-
-Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_05_SQLInjection genommen.
-
-### Artefakt: Codeabschnitt in der Login-Methode für SQL Injection-Schutz:**
-
-```csharp
-public ActionResult<User> Login(LoginDto request)
-{
-    if (request == null || request.Username.IsNullOrEmpty() || request.Password.IsNullOrEmpty())
-    {
-        return BadRequest();
-    }
-
-//Alter Code:
-  string sql = string.Format("SELECT * FROM Users WHERE username = '{0}' AND password = '{1}'", 
-  request.Username, 
-  MD5Helper.ComputeMD5Hash(request.Password));
-
-    //Neuer Code:
-    string username = request.Username;
-    string passwordHash = MD5Helper.ComputeMD5Hash(request.Password);
-
-    User? user = _context.Users
-        .Where(u => u.Username == username)
-        .Where(u => u.Password == passwordHash)
-        .FirstOrDefault();
-
-      //Bis hier neu hinzugefügt
-
-User? user= _context.Users.FromSqlRaw(sql).FirstOrDefault(); //Dieser alter Code wurde gelöscht
-
-//mehr code
-}
-```
-### Wie wurde das Handlungsziel erreicht
-
-Das Handlungsziel wurde erreicht, indem ich den Code verändert habe, um die Sicherheitslücke zu schliessen. Dabei habe ich die Sicherheitslücke und die Ursache von dem in der Applikation erkennt und diese gehoben habe, was nachweist, dass ich dieses Handlungsziel erfolgreich gelöst und verstanden habe. 
-
-### Erklärung des Artefakts:
-
-Der Artefakt zeigt die veraltete und die neue Version im Code. Im Veralteten Code bestand die Gefahr von einer SQL-Injection beim Einloggen. Dies wurde im Neuen Code aufgehoben, damit sich kein unauthorisierter Benutzer mit SQL Befehle wie -- vor dem Passwort schreiben könnte, etc. und somit ohne das Passwort anzugeben/wissen, sich in die Applikation einloggen zu können. Somit sind die Eingaben des Benutzers nicht mehr direkt in der SQL-Tabelle, sondern als separate Variable gespeichert. 
-
-### Kritische Bewertung:
-
-Die Aufträge von diesem Handlungsziel waren verständlich zu lösen, was auch dazu führte, dass ich den Artefakt wie auch die Erklärung gut und schnell machen konnte. Ich hatte keine Schwierigkeiten dabei. Beim Erstellen des Artefakt habe ich auch geschaut, dass der Code sauber und verständlich mit den verschiedenen Änderungen gestalten ist. Die Änderungen im Code sind jedoch nur minimal und könnten erweitert werden, damit die Applikation noch sicherer wäre.
-
-### XSS: In NewsController.cs:
-
-```csharp
-//Vorher:
-  newNews.Header = request.Header;
-  newNews.Detail = request.Detail;
-
-//Nacher:
-  newNews.Header = HttpUtility.HtmlEncode(request.Header);
-  newNews.Detail = HttpUtility.HtmlEncode(request.Detail);
-
-//mehr code....
-
-//Vorher:
-  news.Header = request.Header;
-  news.Detail = request.Detail;
-
-//Nacher:
-  news.Header = HttpUtility.HtmlEncode(request.Header);
-  news.Detail = HttpUtility.HtmlEncode(request.Detail);
-
-//viiiel mehr code :D
-```
-### Screenshots
-
-Vor der Änderung vom Code:
-![HZ2_1](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/7793005e-56f8-4118-af9e-b17e20968c7f)
-
-Nach der Änderung vom Code:
-![HZ2_2](https://github.com/IronEsther/NiklausAndreaLB-183/assets/89132005/0d8d9605-44fd-4757-95ed-3e5edeaaee40)
-
-### Wie wurde das Handlungsziel erreicht
-
-Das Handlungsziel wurde erreicht, indem der Code im NewsController.cs angepasst wurde, um XSS-Sicherheitslücken zu schließen. Durch die Verwendung von ```HttpUtility.HtmlEncode``` wurde sichergestellt, dass Benutzereingaben, insbesondere im Zusammenhang mit den Feldern Header und Detail, vor der Ausgabe auf der Webseite korrekt codiert wurden. Dadurch wird das Risiko von Cross-Site Scripting (XSS) minimiert. Cross-Site Scripting ist deshalb gefährlich, weil Benutzer über dies JavaScript-Befehle (über Eingabefelder) senden kann, um die Website zu schädigen.
-
-### Erklärung des Artefakts:
-
-Das Artefakt zeigt den Vergleich zwischen dem vorherigen Code und dem aktualisierten Code im NewsController.cs. In der vorherigen Version wurden Benutzereingaben direkt in die Header- und Detail-Felder der News übernommen, ohne auf mögliche XSS-Angriffe zu reagieren. Die aktualisierte Version verwendet ```HttpUtility.HtmlEncode```, um sicherzustellen, dass alle potenziell gefährlichen Zeichen in den Benutzereingaben korrekt codiert werden. Dies schützt die Anwendung vor XSS-Angriffen, bei denen bösartiger Code (ganz schlimm :o) in die Webseite eingefügt wird.
-
-### Kritische Bewertung:
-
-Die Umsetzung des Handlungsziels ist effektiv und entspricht bewährten Sicherheitspraktiken. Die Verwendung von HttpUtility.```HtmlEncode``` ist eine gute Methode, um XSS-Angriffe zu verhindern. Die minimalen Änderungen im Code sind klar und verständlich. Um die Sicherheit weiter zu verbessern, könnten zusätzliche Validierungen und Sicherheitsmechanismen in Erwägung gezogen werden.
-
-### Erklärung Auftrag Unsaubere_API:
-
-Beim Auftrag Unsaubere_API mussten wir die API an sich ändern, da es zu viel Daten an dem Server (für den Benutzer sichtbar) geschickt hatte, als es eigentlich hätte sollen. Deshalb mussten wir den Code überarbeiten, damit eine externe Person nicht die Anmeldedaten, die Newsdaten, usw. durch die Netzwerkanalyse herausfinden kann. 
-
-Folgende Informationen wurden an den Server geliefert:
--	Id (Für Update / Delete)
--	Header (Wird angezeigt)
--	Detail (Wird angezeigt)
--	postedDate (Wird angezeigt)
--	isAdminNews (Wird angezeigt)
--	authorId  (Für die Anzeige der Updates / Delete Buttons)
--	author
-  --	id (Wird nicht benötigt)
-  --	username (Wird angezeigt)
-  --	password (hash) (Wird nicht benötigt)
-  --	isAdmin (Wird nicht benötigt)
-
-Es wird fast alles benötigt aber der Passworthash + weitere Daten des Authors (wenn die Tabelle erweitert wird) dürfen nicht an den Server ausgeliefert werden.
-
 ## **_Handlungsziel 3_**
 
-Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_07_BrokenAccessControl genommen.
+Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_11_Autorisierung und LA_183_12_Authentifizierung genommen. 
 
-### Broken Access Controll:
 ```csharp
 //Wichtige Veränderungen im LoginController.cs:
 
@@ -262,19 +283,19 @@ Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_0
 ```
 ### Wie wurde das Handlungsziel erreicht
 
-Das Handlungsziel wurde erreicht, indem der Code im LoginController.cs angepasst wurde, um Broken Access Control zu beheben. Die Änderungen umfassen den Ersatz von direkten SQL-Abfragen durch sicherere Abfragen über Entity Framework Core. Dies gewährleistet einen sicheren Zugriff auf Benutzerinformationen und reduziert das Risiko von SQL-Injection-Angriffen.
+Das Handlungsziel wurde erreicht, indem der Code im LoginController.cs angepasst wurde, um Broken Access Control zu beheben. Die Änderungen umfassen den Ersatz von direkten SQL-Abfragen durch sicherere Abfragen über Entity Framework Core. Dies gewährleistet einen sicheren Zugriff auf Benutzerinformationen und reduziert das Risiko von SQL-Injection-Angriffen. Für die Autorisierung wurde ein JWT-Token umgesetzt und für die 2FA wurde Google Authenticator installiert und benutzt. 
 
-### Erklärung des Artefakts:
+### Erklärung des Artefaktes:
 
-Der Artefakt zeigt den relevanten Codeausschnitt aus dem Auftrag LA_183_07_BrokenAccessControl. Die Veränderungen betreffen die Art und Weise, wie Benutzerinformationen abgerufen werden, um sicherzustellen, dass der Zugriff auf die Datenbank sicherer ist. Die Verwendung von Entity Framework Core ersetzt die zuvor verwendeten direkten SQL-Abfragen.
+Das Artefakt zeigt den relevanten Codeausschnitt aus den Aufträgen LA_183_11_Autorisierung und LA_183_12_Authentifizierung. Die Veränderungen betreffen die Art und Weise, wie Benutzerinformationen abgerufen werden, um sicherzustellen, dass der Zugriff auf die Datenbank sicherer ist. Die Verwendung von Entity Framework Core ersetzt die zuvor verwendeten direkten SQL-Abfragen.
 
 ### Kritische Bewertung:
 
-Die Umsetzung des Handlungsziels ist effektiv und verbessert die Sicherheit der Anwendung erheblich. Der Wechsel von direkten SQL-Abfragen zu Entity Framework Core trägt dazu bei, das Risiko von Broken Access Control und SQL-Injection-Angriffen zu minimieren. 
+Die Umsetzung des Handlungsziels ist effektiv und verbessert die Sicherheit der Anwendung erheblich. Der Wechsel von direkten SQL-Abfragen zu Entity Framework Core trägt dazu bei, das Risiko von Broken Access Control und SQL-Injection-Angriffen zu minimieren. Man könnte jedoch ein besseres Hashing benutzten, um die Sicherheit der Applikation zu erhöhen.
 
 ## **_Handlungsziel 4_**
 
-Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_13_HumanFactor genommen.
+Als Artefakt habe ich den Codeauschnitt und die Veränderung im Auftrag LA_183_13_HumanFactor und LA_183_15_PasswortHashing genommen.
 
 ### HumanFactor: UserController.cs+PasswortUpdateDTO.cs:
 
@@ -350,7 +371,7 @@ Bei einem gültigen altes Passwort:
 
 Ich habe das Handlungsziel erreicht, indem ich im Artefakt hinzugefügt habe, dass man das altes Passwort angeben muss, um es zu ändern. Dabei werden sicherheitsrelevante Faktoren berücksichtigt. 
 
-### Erklärung des Artefakts:
+### Erklärung des Artefaktes:
 
 Der Code wurde im AccountController.cs entsprechend angepasst. Dies beinhaltet eine bessere Strukturierung des Codes, das Hinzufügen von Kommentaren und die Bereitstellung von sinnvollen HTTP-Antwortcodes. Es überprüft das Passwort, bevor es geändert wird und führt eine Validierung des Passwortes durch: Grossbuchstaben, Kleinbuchstaben und Zahlen. Somit ist das Passwort stark genug, damit es nicht herausgefunden werden kann. Mit dem neuen Code kann daher ein externer Nutzer nicht einfach so das Passwort ändern, wenn er/sie das altes Passwort nicht weiss. Somit ist die Applikation ein wenig sicherer als vorher! Success 👍!
 
@@ -362,7 +383,7 @@ Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verstä
 
 ### Artefakt
 
-Für den Logging Auftrag, LA_183_17_Logging, habe ich Inspiration von dem Code im Auftrag geholt und mit den Musterlösungen verglichen und verbessert.
+Für den Logging Auftrag, LA_183_17_Logging und LA_183_51_AuditTrail, habe ich Inspiration von dem Code im Auftrag geholt und mit den Musterlösungen verglichen und verbessert.
 
 ```csharp
 //LoginController.cs
@@ -391,6 +412,10 @@ _logger.LogWarning($"login failed for user '{request.Username}'");
 _logger.LogInformation($"login successful for user '{request.Username}'");
 }
 
+```
+Wichtige Änderungen Im NewsController:
+
+```csharp
 //NewsController.cs
 public class NewsController : ControllerBase
   {
@@ -406,10 +431,93 @@ _logger.LogWarning($"user {_userService.GetUsername()} tried to edit foreign new
 _logger.LogInformation($"news entry {id} updated by {_userService.GetUsername()}");
 _logger.LogWarning($"user {_userService.GetUsername()} tried to delete foreign news (id: {id})");
 _logger.LogInformation($"news entry {id} deleted by {_userService.GetUsername()}");
+```
+
+Konfiguration:
+```csharp
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole(); // Console Output
+    logging.AddDebug(); // Debugging Console Output
+});
+```
+
+Audit-Trail:
+```csharp
+    namespace M183.Migrations
+
+{
+/// <inheritdoc />
+public partial class CreateTrigger : Migration
+{
+/// <inheritdoc />
+protected override void Up(MigrationBuilder migrationBuilder)
+{
+migrationBuilder.CreateTable(
+name: "NewsAudit",
+columns: table => new
+{
+Id = table.Column<int>(type: "int", nullable: false)
+.Annotation("SqlServer:Identity", "1, 1"),
+NewsId = table.Column<int>(type: "int", nullable: false),
+Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+AuthorId = table.Column<int>(type: "int", nullable: false)
+},
+constraints: table =>
+{
+table.PrimaryKey("PK_NewsAudit", x => x.Id);
+});
+
+            migrationBuilder.Sql(@"CREATE TRIGGER news_insert ON dbo.News
+                AFTER INSERT
+                AS DECLARE
+                  @NewsId INT,
+                  @AuthorId INT;
+                SELECT @NewsId = ins.ID FROM INSERTED ins;
+                SELECT @AuthorId = ins.AuthorId FROM INSERTED ins;
+
+                INSERT INTO NewsAudit (NewsId, Action, AuthorId) VALUES (@NewsId, 'Create', @AuthorId);");
+
+            migrationBuilder.Sql(@"CREATE TRIGGER news_update ON dbo.News
+                AFTER UPDATE
+                AS DECLARE
+                  @NewsId INT,
+                  @AuthorId INT;
+                SELECT @NewsId = ins.ID FROM INSERTED ins;
+                SELECT @AuthorId = ins.AuthorId FROM INSERTED ins;
+
+                INSERT INTO NewsAudit (NewsId, Action, AuthorId) VALUES (@NewsId, 'Update', @AuthorId);");
 
 
-//Programm.cs
+            migrationBuilder.Sql(@"CREATE TRIGGER news_delete ON dbo.News
+                AFTER DELETE
+                AS DECLARE
+                  @NewsId INT,
+                  @AuthorId INT;
+                SELECT @NewsId = del.ID FROM DELETED del;
+                SELECT @AuthorId = del.AuthorId FROM DELETED del;
 
+                INSERT INTO NewsAudit (NewsId, Action, AuthorId) VALUES (@NewsId, 'Delete', @AuthorId);");
+
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(name: "NewsAudit");
+            migrationBuilder.Sql("DROP TRIGGER IF EXISTS news_insert");
+            migrationBuilder.Sql("DROP TRIGGER IF EXISTS news_update");
+            migrationBuilder.Sql("DROP TRIGGER IF EXISTS news_delete");
+        }
+    }
+
+}
+```
+
+Änderungen im Programm.cs:
+
+```csharp
 //Neu Hinzugefügt :D
 
 // Logging Configuration
@@ -423,15 +531,15 @@ builder.Host.ConfigureLogging(logging =>
 ```
 ### Wie wurde das Handlungsziel erreicht
 
-Das Handlungsziel wurde mit dem erreicht, dass im Artefakt das Logging implementiert wurde, wie es im Auftrag erfordert war.
+Das Handlungsziel wurde mit dem erreicht, dass im Artefakt das Logging die Einrichtung vom Audit-Trail implementiert wurde, wie es in den Aufträgen erfordert war.
 
-### Erklärung des Artefakts:
+### Erklärung des Artefaktes:
 
-Logging wurde mit ILogging ersetzt, um wichtige Informationen über den Anwendungsstatus zu erhalten. Der Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. 
+Logging wurde mit ILogging ersetzt, um wichtige Informationen über den Anwendungsstatus zu erhalten. Das Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. Der Audit-Trail wurde mit Datenbank-Triggern implementiert, um Änderungen zu protokollieren und zu speichern.
 
 ### Kritische Bewertung:
 
-Die Implementierung des verbesserten Loggings erfüllt das Handlungsziel effektiv, indem sie eine detaillierte Protokollierung in verschiedenen Teilen der Anwendung ermöglicht. Der Artefakt zeigt, wie effektiv es ist, ILogger anstatt Logger zu benutzen, damit man die Informationen, wie auch die Verwendung von SQL Triggers, sicher speichern kann. Jedoch könnte die Applikation noch sicherer werden, jedoch weiss ich momentan nicht wie. (Vielleicht in der Zukunft)
+Die Implementierung des verbesserten Loggings erfüllt das Handlungsziel effektiv, indem sie eine detaillierte Protokollierung in verschiedenen Teilen der Anwendung ermöglicht. Das Artefakt zeigt, wie effektiv es ist, ILogger anstatt Logger zu benutzen, damit man die Informationen, wie auch die Verwendung von SQL Triggers, sicher speichern kann. Jedoch könnte die Applikation noch sicherer werden, jedoch weiss ich momentan nicht wie. (Vielleicht in der Zukunft)
 
 ## Selbsteinschätzung des Erreichungsgrades der Kompetenz des Moduls
 
