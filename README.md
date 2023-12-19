@@ -256,6 +256,12 @@ Die Codeänderungen wurden vorgenommen, um Broken Access Control zu beheben. Sta
 Die implementierten Änderungen bieten eine verbesserte Sicherheit durch die Verwendung von Entity Framework Core für den Datenbankzugriff anstelle von direkten SQL-Abfragen. Dies verringert das Risiko von SQL-Injection-Angriffen erheblich.
 
 
+## **_Handlungsziel 4_**
+
+SecretImRepository
+HumanFactor
+DefensiveProgrammierung
+
 **LA_183_13_HumanFactor: UserController.cs+PasswortUpdateDTO.cs:**
 
 ```csharp
@@ -322,11 +328,26 @@ Der Code wurde im AccountController.cs entsprechend angepasst. Dies beinhaltet e
 **Kritische Bewertung:**
 Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verständlichkeit und die Übersichtlichkeit. Die Validierung des neuen Passworts erfolgt nun durch die Verwendung von IsMatch, was eine genauere Überprüfung ermöglicht. Die HTTP-Antwortcodes und Rückgabemeldungen wurden verbessert, um besser auf den Status der Passwortänderung hinzuweisen.
 
-## **_Handlungsziel 4_**
+**Artefakt: Geänderte appsettings.json - Sicherung des Secrets im Repository**
 
-SecretImRepository
-HumanFactor
-DefensiveProgrammierung
+```json
+appsettings.json
+//Unser lieber, nicht sicherer Code wurde entfernt:
+"Key": "47v1npCi7PL4fIynUvRDWrXMSsZUwpTNvBgvsNOmCfpWfVDMMU83vWI7IEeVNq7u3KdssLQHiEfODRFHuSlBRja04OBDVHWPtEM4hvUyQA2TIhvaxi8BMdtcnfH5FUOhn2ti6hYF33PRV+J8znJAI2Cmcw3/DejQIGPmpbPbNZc="
+
+
+//Neuer code, damit nicht jeder unser Key sieht und jedes mal ein anderer generiert wird (Sicherheit und so ;))
+"Key": ""
+
+```
+Artefakt: Geänderte appsettings.json - Sicherung des Secrets im Repository
+
+Erklärung des Artefakts:
+Die Datei appsettings.json enthält sensible Informationen wie Schlüssel und Geheimnisse für die Anwendung. Das Artefakt zeigt die Entfernung des unsicheren Codes und die Einführung einer sicheren Praxis, indem der ursprüngliche Schlüssel entfernt wurde und ein neuer Platzhalter-Schlüssel hinzugefügt wurde. Dies gewährleistet, dass das Geheimnis nicht im Repository gespeichert wird.
+
+Kritische Bewertung:
+Die Umsetzung des Artefakts ist wirksam und erfüllt das Handlungsziel, sensible Informationen, insbesondere Geheimnisse und Schlüssel, sicher im Repository zu speichern. Die Verwendung eines Platzhalter-Schlüssels ist eine gute Praxis, um sicherzustellen, dass keine vertraulichen Daten öffentlich zugänglich sind. Es ist jedoch wichtig sicherzustellen, dass dieser Platzhalter regelmässig aktualisiert wird, um die Sicherheit weiter zu gewährleisten.
+
 
 ## **_Handlungsziel 5_**
 
