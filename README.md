@@ -324,37 +324,15 @@ return "";
 ```
 ### Wie wurde das Handlungsziel erreicht
 
+Ich habe das Handlungsziel erreicht, indem ich im Artefakt hinzugefügt habe, dass man das altes Passwort angeben muss, um es zu ändern. Dabei werden sicherheitsrelevante Faktoren berücksichtigt. 
 
 ### Erklärung des Artefakts:
 
-Der Code wurde im AccountController.cs entsprechend angepasst. Dies beinhaltet eine bessere Strukturierung des Codes, das Hinzufügen von Kommentaren, die Verwendung von IsMatch anstelle von Match für die Regex-Validierung und die Bereitstellung von sinnvollen HTTP-Antwortcodes. Ausserdem wurde die Rückgabemeldung nach einer erfolgreichen Passwortänderung aktualisiert. Mit dem neuen Code kann daher ein externer Nutzer nicht einfach so das Passwort ändern, wenn er/sie das altes Passwort nicht weiss. Somit ist die Applikation ein wenig sicherer als vorher! Success 👍!
+Der Code wurde im AccountController.cs entsprechend angepasst. Dies beinhaltet eine bessere Strukturierung des Codes, das Hinzufügen von Kommentaren und die Bereitstellung von sinnvollen HTTP-Antwortcodes. Es überprüft das Passwort, bevor es geändert wird und führt eine Validierung des Passwortes durch: Grossbuchstaben, Kleinbuchstaben und Zahlen. Somit ist das Passwort stark genug, damit es nicht herausgefunden werden kann. Mit dem neuen Code kann daher ein externer Nutzer nicht einfach so das Passwort ändern, wenn er/sie das altes Passwort nicht weiss. Somit ist die Applikation ein wenig sicherer als vorher! Success 👍!
 
 ### Kritische Bewertung:
 
-Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verständlichkeit und die Übersichtlichkeit. Die Validierung des neuen Passworts erfolgt nun durch die Verwendung von IsMatch, was eine genauere Überprüfung ermöglicht. Die HTTP-Antwortcodes und Rückgabemeldungen wurden verbessert, um besser auf den Status der Passwortänderung hinzuweisen.
-
-### Artefakt: Geänderte appsettings.json - Sicherung des Secrets im Repository
-
-```csharp
-//Unser lieber, nicht sicherer Code wurde entfernt:
-"Key": "47v1npCi7PL4fIynUvRDWrXMSsZUwpTNvBgvsNOmCfpWfVDMMU83vWI7IEeVNq7u3KdssLQHiEfODRFHuSlBRja04OBDVHWPtEM4hvUyQA2TIhvaxi8BMdtcnfH5FUOhn2ti6hYF33PRV+J8znJAI2Cmcw3/DejQIGPmpbPbNZc="
-
-
-//Neuer code, damit nicht jeder unser Key sieht und jedes mal ein anderer generiert wird (Sicherheit und so ;))
-"Key": ""
-
-```
-### Wie wurde das Handlungsziel erreicht
-
-
-### Erklärung des Artefakts:
-
-Die Datei appsettings.json enthält sensible Informationen wie Schlüssel und Geheimnisse für die Anwendung. Das Artefakt zeigt die Entfernung des unsicheren Codes und die Einführung einer sicheren Praxis, indem der ursprüngliche Schlüssel entfernt wurde und ein neuer Platzhalter-Schlüssel hinzugefügt wurde. Dies gewährleistet, dass das Geheimnis nicht im Repository gespeichert wird.
-
-### Kritische Bewertung:
-
-Die Umsetzung des Artefakts ist wirksam und erfüllt das Handlungsziel, sensible Informationen, insbesondere Geheimnisse und Schlüssel, sicher im Repository zu speichern. Die Verwendung eines Platzhalter-Schlüssels ist eine gute Praxis, um sicherzustellen, dass keine vertraulichen Daten öffentlich zugänglich sind. Es ist jedoch wichtig sicherzustellen, dass dieser Platzhalter regelmässig aktualisiert wird, um die Sicherheit weiter zu gewährleisten.
-
+Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verständlichkeit und die Übersichtlichkeit. Die Applikation ist sicher, jedoch kann man immer noch weitere Sicherheitsaspekte hinzufügen, wie zum Beispiel eine Mindestanzahl von Buchstaben im Passwort, eine zwei-Faktoren-Authentifizierung, etc.
 
 ## **_Handlungsziel 5_**
 
@@ -421,15 +399,18 @@ builder.Host.ConfigureLogging(logging =>
 ```
 ### Wie wurde das Handlungsziel erreicht
 
+Das Handlungsziel wurde mit dem erreicht, dass im Artefakt das Logging implementiert wurde, wie es im Auftrag erfordert war.
 
 ### Erklärung des Artefakts:
 
-Das Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. Durch die Hinzufügung des ILogger-Parameters in den Controllern und die Konfiguration im Programm.cs wird detailliertes Logging implementiert, um wichtige Informationen über den Anwendungsstatus zu erhalten.
+Logging wurde mit ILogging ersetzt, um wichtige Informationen über den Anwendungsstatus zu erhalten. Der Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. 
 
 ### Kritische Bewertung:
 
-Die Implementierung des verbesserten Loggings erfüllt das Handlungsziel effektiv, indem sie eine detaillierte Protokollierung in verschiedenen Teilen der Anwendung ermöglicht. Die Verwendung von Log-Leveln wie Information und Warning bietet Flexibilität für unterschiedliche Situationen. Es ist jedoch wichtig sicherzustellen, dass die Log-Meldungen aussagekräftig und hilfreich sind, um bei der Fehlersuche und Überwachung effektiv zu sein.
+Die Implementierung des verbesserten Loggings erfüllt das Handlungsziel effektiv, indem sie eine detaillierte Protokollierung in verschiedenen Teilen der Anwendung ermöglicht. Der Artefakt zeigt, wie effektiv es ist, ILogger anstatt Logger zu benutzen, damit man die Informationen, wie auch die Verwendung von SQL Triggers, sicher speichern kann. Jedoch könnte die Applikation noch sicherer werden, jedoch weiss ich momentan nicht wie. (Vielleicht in der Zukunft)
 
 ## Selbsteinschätzung des Erreichungsgrades der Kompetenz des Moduls
 
-Geben Sie eine Selbsteinschätzung zu der Kompetenz in diesem Modul ab. Schätzen Sie selbst ein, inwiefern Sie die Kompetenz dieses Moduls erreicht haben und inwiefern nicht. Es geht in diesem Abschnitt nicht darum, auf die einzelnen Handlungsziele einzugehen. Das haben Sie bereits gemacht. Begründen Sie ihre Aussagen.
+In diesem Modul habe ich mich grundsätzlich sehr sicher gefühlt und hatte auch viel Freude an den Aufträgen, da es ein spezielles Modul war, wessen Thema wir nie durchgenommen haben. Im grossen und ganzem habe ich viel mitgenommen. Auch der Unterrichtstyl war passend, da der Lehrer immer da war, wenn wir Hilfe brauchten oder eine Frage hatten. Er hat auch den Unterricht so gestaltet, dass wir die Themen in unserem Tempo bearbeiten konnten. 
+
+Das einzige, was nicht so gut geloffen ist, war dieser Portfolio-Eintrag. Ich war mir mit den Anforderungen nicht sicher, welche und wie ich die Artefakte belegen sollte, wie viel ich dazu schreiben musste, etc. Ich habe mich jedoch während dem Schreiben so gut wie möglich versucht an den Handlungszielen und Vorgaben festzuhalten. Alle Artefakte sind dabei während dem Modul enstanden, von den Aufträge oder von mir, ausser alle Sachen, die ich als 'externe Quelle', also Musterlösungen, belegt habe. Trotz diesen Schwierigkeiten glaube ich, dass ich von diesem Modul viel mitgenommen habe. 
