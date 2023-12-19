@@ -330,8 +330,7 @@ Die implementierten Änderungen verbessern die Lesbarkeit des Codes, die Verstä
 
 **Artefakt: Geänderte appsettings.json - Sicherung des Secrets im Repository**
 
-```json
-appsettings.json
+```csharp
 //Unser lieber, nicht sicherer Code wurde entfernt:
 "Key": "47v1npCi7PL4fIynUvRDWrXMSsZUwpTNvBgvsNOmCfpWfVDMMU83vWI7IEeVNq7u3KdssLQHiEfODRFHuSlBRja04OBDVHWPtEM4hvUyQA2TIhvaxi8BMdtcnfH5FUOhn2ti6hYF33PRV+J8znJAI2Cmcw3/DejQIGPmpbPbNZc="
 
@@ -352,8 +351,131 @@ Die Umsetzung des Artefakts ist wirksam und erfüllt das Handlungsziel, sensible
 ## **_Handlungsziel 5_**
 
 Logging
-Zusätzliche Lern-Arbeitsaufträge:
-AuditTrail
+
+Für den Logging Auftrag habe ich Inspiration von dem Code im Auftrag geholt und mit den Musterlösungen verglichen und verbessert.
+
+```csharp
+//LoginController.cs
+
+//Alle using directories 
+
+public class LoginController : ControllerBase
+{
+
+//Hinzugefügt:
+private readonly ILogger _logger;
+
+//gelöscht, weil es zu unspezifisch war:
+public LoginController(NewsAppContext context, IConfiguration configuration)
+
+//neu hinzugefügt, viel spezifischer sogar!!:O :
+public LoginController(ILogger<LoginController> logger, NewsAppContext context, IConfiguration configuration)
+{
+   _logger = logger;
+
+//Mehr code :O
+
+//Neu Hinzugefügt:
+
+_logger.LogWarning($"login failed for user '{request.Username}'");
+_logger.LogInformation($"login successful for user '{request.Username}'");
+}
+
+//NewsController.cs
+public class NewsController : ControllerBase
+  {
+
+//Neu Hinzugefügt, verstreut über dem Code:
+private readonly ILogger _logger;
+//gelöscht, Grund war, weil es zu unspezifisch war:
+public NewsController(NewsAppContext context, IUserService userService)
+//Hinzugefügt:
+public NewsController(ILogger<NewsController> logger, NewsAppContext context, IUserService userService)
+_logger.LogInformation($"news entry created by {_userService.GetUsername()}");
+_logger.LogWarning($"user {_userService.GetUsername()} tried to edit foreign news (id: {id})");
+_logger.LogInformation($"news entry {id} updated by {_userService.GetUsername()}");
+_logger.LogWarning($"user {_userService.GetUsername()} tried to delete foreign news (id: {id})");
+_logger.LogInformation($"news entry {id} deleted by {_userService.GetUsername()}");
+
+
+//Programm.cs
+
+//Neu Hinzugefügt :D
+
+// Logging Configuration
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole(); // Console Output
+    logging.AddDebug(); // Debugging Console Output
+});
+
+```
+
+Artefakt: Verbessertes Logging in verschiedenen Teilen der Anwendung
+
+csharp
+
+// LoginController.cs
+
+// Alle using directories 
+
+public class LoginController : ControllerBase
+{
+    // Hinzugefügt:
+    private readonly ILogger _logger;
+
+    // Gelöscht, weil es zu unspezifisch war:
+    public LoginController(NewsAppContext context, IConfiguration configuration)
+
+    // Neu hinzugefügt, viel spezifischer sogar!! :O :
+    public LoginController(ILogger<LoginController> logger, NewsAppContext context, IConfiguration configuration)
+    {
+        _logger = logger;
+
+        // Mehr Code :O
+
+        // Neu Hinzugefügt:
+
+        _logger.LogWarning($"login failed for user '{request.Username}'");
+        _logger.LogInformation($"login successful for user '{request.Username}'");
+    }
+
+// NewsController.cs
+public class NewsController : ControllerBase
+{
+    // Neu Hinzugefügt, verstreut über dem Code:
+    private readonly ILogger _logger;
+    
+    // Gelöscht, Grund war, weil es zu unspezifisch war:
+    public NewsController(NewsAppContext context, IUserService userService)
+    
+    // Hinzugefügt:
+    public NewsController(ILogger<NewsController> logger, NewsAppContext context, IUserService userService)
+    
+    _logger.LogInformation($"news entry created by {_userService.GetUsername()}");
+    _logger.LogWarning($"user {_userService.GetUsername()} tried to edit foreign news (id: {id})");
+    _logger.LogInformation($"news entry {id} updated by {_userService.GetUsername()}");
+    _logger.LogWarning($"user {_userService.GetUsername()} tried to delete foreign news (id: {id})");
+    _logger.LogInformation($"news entry {id} deleted by {_userService.GetUsername()}");
+
+// Programm.cs
+
+// Neu Hinzugefügt :D
+
+// Logging Configuration
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole(); // Console Output
+    logging.AddDebug(); // Debugging Console Output
+});
+
+Erklärung des Artefakts:
+Das Artefakt zeigt die Integration von verbessertem Logging in verschiedenen Teilen der Anwendung, einschließlich des LoginControllers, des NewsControllers und der Konfiguration im Programm.cs. Durch die Hinzufügung des ILogger-Parameters in den Controllern und die Konfiguration im Programm.cs wird detailliertes Logging implementiert, um wichtige Informationen über den Anwendungsstatus zu erhalten.
+
+Kritische Bewertung:
+Die Implementierung des verbesserten Loggings erfüllt das Handlungsziel effektiv, indem sie eine detaillierte Protokollierung in verschiedenen Teilen der Anwendung ermöglicht. Die Verwendung von Log-Leveln wie Information und Warning bietet Flexibilität für unterschiedliche Situationen. Es ist jedoch wichtig sicherzustellen, dass die Log-Meldungen aussagekräftig und hilfreich sind, um bei der Fehlersuche und Überwachung effektiv zu sein.
 
 ## Selbsteinschätzung des Erreichungsgrades der Kompetenz des Moduls
 Geben Sie eine Selbsteinschätzung zu der Kompetenz in diesem Modul ab. Schätzen Sie selbst ein, inwiefern Sie die Kompetenz dieses Moduls erreicht haben und inwiefern nicht. Es geht in diesem Abschnitt nicht darum, auf die einzelnen Handlungsziele einzugehen. Das haben Sie bereits gemacht. Begründen Sie ihre Aussagen.
